@@ -14,3 +14,7 @@ htmlcov
 
 # Editors
 .idea
+
+keys.py
+access_token_cache_file.json
+fitbit_data
