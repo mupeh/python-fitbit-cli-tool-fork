@@ -15,7 +15,7 @@ import schedule
 import time
 import argparse
 
-ROOT_PATH = 'fitbit_data'
+ROOT_PATH = '../fitbit_data'
 
 
 def refresh_callback(token):
@@ -143,15 +143,15 @@ if __name__ == '__main__':
             time.sleep(1)
             seconds += 1
 
-            printstring = 'Hours since script start: %06.4f' % (str(seconds/3600))
-            print('Hours since script start: ' + seconds/3600, end='\r')
+            printstring = 'Hours since script start: %06.4f' % (seconds/3600)
+            print(printstring, end='\r')
     else:
         auth2_client = get_oauth_client(with_refresh=False)
 
         begin = datetime.datetime(
             year = 2022, 
             month = 12, 
-            day = 18
+            day = 10
         )
         end = datetime.datetime(
             year= 2022, 
