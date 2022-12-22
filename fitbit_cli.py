@@ -52,20 +52,23 @@ def get_tcx(logid):
 
 def get_data_for_date(date):
 
-    # heartrate
-    data = auth2_client.intraday_time_series('activities/heart', base_date=date, detail_level='1sec')
-    save_json_file('heartrate', data, date)
-
     data = auth2_client.get_sleep(date)
     save_json_file('sleep', data, date)
 
     data = auth2_client.activity_daily_summary(base_date=date.strftime('%Y-%m-%d'))
     save_json_file('activities', data, date)
+    for activity in data['activities']:
+        get_tcx(activity['logId'])
 
-    supported_activities = ['calories', 'distance', 'elevation', 'floors', 'steps']
-    for act in supported_activities:
-        data = auth2_client.intraday_time_series('activities/' + act, base_date=date, detail_level='1min')
+    supported_activities = ['heart', 'calories', 'distance', 'elevation', 'floors', 'steps']
+    supported_detail     = ['1sec' ,  '1min'    , '1min'    , '1min'     , '1min'  , '1min']
+    for i in range(len(supported_activities)):
+        act = supported_activities[i]
+        data = auth2_client.intraday_time_series('activities/' + act, base_date=date, detail_level=supported_detail[i])
         save_json_file(act, data, date)
+
+    # to do: add active-zone-minutes, spo2 data, hrv data, breathing rate data also check out remaining usefull data (ie activity logs list)
+    # https://dev.fitbit.com/build/reference/web-api/intraday/
 
 
 def get_all_fitbit_data_yesterday():
@@ -124,9 +127,6 @@ if __name__ == '__main__':
     # get bool for whether to use refresh token
     parser.add_argument('--auto', type=bool, default=False, help='Use refresh token')
 
-    # activities and tcx
-    parser.add_argument('--act', type=bool, default=False, help='Get activities')
-
     args = parser.parse_args()
 
     # get bool 
@@ -137,30 +137,26 @@ if __name__ == '__main__':
 
         print('')
         print('Waiting until: ' + polltime)
+        seconds = 0
         while True:
             schedule.run_pending()
             time.sleep(1)
-            print('.', end='')
-    elif args.act:
-        auth2_client = get_oauth_client(with_refresh=False)
-        dateafter = datetime.datetime(
-            year = 2022, 
-            month = 12, 
-            day = 19
-        )
-        get_act_log_list(dateafter)
+            seconds += 1
+
+            printstring = 'Hours since script start: %06.4f' % (str(seconds/3600))
+            print('Hours since script start: ' + seconds/3600, end='\r')
     else:
         auth2_client = get_oauth_client(with_refresh=False)
 
         begin = datetime.datetime(
             year = 2022, 
             month = 12, 
-            day = 19
+            day = 18
         )
         end = datetime.datetime(
             year= 2022, 
             month = 12, 
-            day=20
+            day=21
         )
 
         delta = end - begin
