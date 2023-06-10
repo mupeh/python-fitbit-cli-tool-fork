@@ -153,10 +153,15 @@ if __name__ == '__main__':
             month = 12, 
             day = 10
         )
+        begin = datetime.datetime(
+            year = 2023, 
+            month = 4, 
+            day = 16
+        )
         end = datetime.datetime(
-            year= 2022, 
-            month = 12, 
-            day=21
+            year= 2023, 
+            month = 6, 
+            day=10
         )
 
         delta = end - begin
